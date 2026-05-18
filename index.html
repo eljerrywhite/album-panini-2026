@@ -3,30 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a8754">
+<meta name="theme-color" content="#0d1410">
 <title>Álbum Panini · Mundial 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* Paleta inspirada en el álbum Panini 2026 */
-    --bg: #fef9e7;          /* crema cálido */
-    --bg-2: #ffffff;         /* blanco */
-    --surface: #ffffff;
-    --surface-2: #fff8d6;    /* amarillo muy claro */
-    --border: #e8dfa8;       /* borde dorado suave */
-    --ink: #1a3a2e;          /* verde oscuro casi negro */
-    --ink-dim: #5a7a6e;
-    --ink-faint: #a8b8b0;
-    --green: #0a8754;        /* verde fútbol intenso */
-    --green-dark: #06633c;
-    --yellow: #ffc933;       /* amarillo trofeo */
-    --red: #e63946;          /* rojo vibrante */
-    --blue: #1d70b8;         /* azul vivo */
-    --orange: #f77f00;       /* naranja repetidas */
-    --shadow: 0 4px 16px rgba(10, 58, 46, 0.12);
-    --shadow-lg: 0 8px 28px rgba(10, 58, 46, 0.18);
+    /* Dark mode — paleta inspirada en el álbum Panini 2026 */
+    --bg: #0d1410;           /* verde oscurísimo casi negro */
+    --bg-2: #131b16;          /* superficie elevada */
+    --surface: #1a2520;       /* tarjetas */
+    --surface-2: #243029;     /* superficie más clara */
+    --border: #2d3b33;        /* borde sutil */
+    --ink: #f4ead0;           /* texto principal (crema cálido) */
+    --ink-dim: #a8b8ad;
+    --ink-faint: #6b7a70;
+    --green: #1fb573;         /* verde fútbol brillante */
+    --green-dark: #0f8a55;
+    --yellow: #ffd24a;        /* amarillo trofeo */
+    --red: #ff5566;           /* rojo brillante */
+    --blue: #4ea3e8;          /* azul vivo */
+    --orange: #ff9933;        /* naranja repetidas */
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.5);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -36,9 +36,9 @@
     font-family: 'Manrope', sans-serif;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 0% 0%, rgba(10,135,84,0.08) 0px, transparent 40%),
-      radial-gradient(circle at 100% 100%, rgba(255,201,51,0.12) 0px, transparent 40%),
-      radial-gradient(circle at 100% 0%, rgba(230,57,70,0.05) 0px, transparent 35%);
+      radial-gradient(circle at 0% 0%, rgba(31,181,115,0.15) 0px, transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(255,210,74,0.10) 0px, transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(255,85,102,0.08) 0px, transparent 40%);
     background-attachment: fixed;
     color: var(--ink);
     min-height: 100vh;
@@ -51,7 +51,7 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(254, 249, 231, 0.92);
+    background: rgba(13, 20, 16, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 2px solid var(--green);
@@ -178,7 +178,7 @@
   }
   .group-tab.active {
     background: var(--green);
-    color: var(--bg);
+    color: #0d1410;
     border-color: var(--green);
     box-shadow: var(--shadow);
   }
@@ -406,7 +406,7 @@
   .error-banner {
     margin: 12px 16px;
     padding: 14px;
-    background: #fff3f3;
+    background: rgba(255, 85, 102, 0.1);
     border: 1.5px solid var(--red);
     border-radius: 12px;
     color: var(--ink);
@@ -420,7 +420,7 @@
     margin-bottom: 4px;
   }
   .error-banner code {
-    background: white;
+    background: var(--surface);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'JetBrains Mono', monospace;
@@ -432,7 +432,7 @@
   .config-info {
     margin: 16px;
     padding: 16px;
-    background: white;
+    background: var(--surface);
     border: 2px dashed var(--yellow);
     border-radius: 14px;
     font-size: 13px;
@@ -442,7 +442,7 @@
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
     letter-spacing: 1px;
-    color: var(--green-dark);
+    color: var(--yellow);
     margin-bottom: 8px;
   }
   .config-info code {
