@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a8754">
+<title>Álbum Panini · Mundial 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Paleta inspirada en el álbum Panini 2026 */
+    --bg: #fef9e7;          /* crema cálido */
+    --bg-2: #ffffff;         /* blanco */
+    --surface: #ffffff;
+    --surface-2: #fff8d6;    /* amarillo muy claro */
+    --border: #e8dfa8;       /* borde dorado suave */
+    --ink: #1a3a2e;          /* verde oscuro casi negro */
+    --ink-dim: #5a7a6e;
+    --ink-faint: #a8b8b0;
+    --green: #0a8754;        /* verde fútbol intenso */
+    --green-dark: #06633c;
+    --yellow: #ffc933;       /* amarillo trofeo */
+    --red: #e63946;          /* rojo vibrante */
+    --blue: #1d70b8;         /* azul vivo */
+    --orange: #f77f00;       /* naranja repetidas */
+    --shadow: 0 4px 16px rgba(10, 58, 46, 0.12);
+    --shadow-lg: 0 8px 28px rgba(10, 58, 46, 0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { overscroll-behavior-y: contain; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 0% 0%, rgba(10,135,84,0.08) 0px, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(255,201,51,0.12) 0px, transparent 40%),
+      radial-gradient(circle at 100% 0%, rgba(230,57,70,0.05) 0px, transparent 35%);
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 80px;
+    line-height: 1.4;
+  }
+
+  /* HEADER */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(254, 249, 231, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--green);
+    padding: 12px 16px 10px;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .title-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--green);
+    color: var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .title span { color: var(--red); }
+  .total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-dim);
+    font-weight: 500;
+    text-align: right;
+  }
+  .total b { color: var(--green-dark); font-weight: 700; font-size: 13px; }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green) 0%, var(--yellow) 60%, var(--red) 100%);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* STATUS BAR (last update + refresh) */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-dim);
+  }
+  .status-bar .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    box-shadow: 0 0 0 3px rgba(10,135,84,0.18);
+  }
+  .status-bar .dot.loading { background: var(--yellow); animation: pulse 1s infinite; }
+  .status-bar .dot.error { background: var(--red); }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .refresh-btn:active { background: var(--surface-2); }
+  .refresh-btn.spinning .refresh-icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* GROUP TABS */
+  .group-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px 16px 14px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .group-tabs::-webkit-scrollbar { display: none; }
+  .group-tab {
+    flex-shrink: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    padding: 7px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--ink-dim);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .group-tab.active {
+    background: var(--green);
+    color: var(--bg);
+    border-color: var(--green);
+    box-shadow: var(--shadow);
+  }
+
+  .content { padding: 0 16px; }
+
+  /* TEAM CARD */
+  .team {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .team.complete {
+    border-color: var(--green);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(10,135,84,0.08) 100%);
+    box-shadow: 0 0 0 1px var(--green);
+  }
+  .team-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .team-flag {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    background: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--yellow);
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .team.complete .team-flag { background: var(--green); color: var(--yellow); }
+  .team-info { flex: 1; min-width: 0; }
+  .team-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink);
+  }
+  .check-icon { color: var(--green); font-size: 14px; }
+  .team-stats {
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-dim);
+    flex-wrap: wrap;
+  }
+  .team-stats .stat-have { color: var(--green-dark); font-weight: 700; }
+  .team-stats .stat-missing { color: var(--red); font-weight: 700; }
+  .team-stats .stat-dup { color: var(--orange); font-weight: 700; }
+  .chevron {
+    color: var(--ink-faint);
+    font-size: 18px;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .team.open .chevron { transform: rotate(180deg); }
+  .team-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .team.open .team-body { max-height: 2000px; }
+  .team-body-inner {
+    padding: 12px 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 14px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CHIPS - estampas */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1.5px dashed var(--ink-faint);
+    background: transparent;
+    color: var(--ink-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .chip.have {
+    background: var(--green);
+    border: 1.5px solid var(--green);
+    color: var(--yellow);
+  }
+  .chip.have.has-dup::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
+    background: var(--orange);
+    border-radius: 50%;
+    border: 1.5px solid var(--green);
+  }
+
+  /* DUP CHIPS - lectura */
+  .dup-chip {
+    min-width: 50px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
+    background: var(--orange);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1.5px solid var(--orange);
+  }
+  .dup-count {
+    background: rgba(0,0,0,0.2);
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  /* EMPTY STATE */
+  .empty-msg {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-style: italic;
+    padding: 8px 0;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px 8px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-dim);
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-dot.missing { background: transparent; border: 1.5px dashed var(--ink-faint); }
+  .legend-dot.have { background: var(--green); }
+  .legend-dot.dup { background: var(--orange); }
+
+  /* LOADING SCREEN */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    transition: opacity 0.3s;
+  }
+  .loading-screen.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .loading-ball {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: conic-gradient(var(--green) 0% 33%, var(--yellow) 33% 66%, var(--red) 66% 100%);
+    animation: spin 1.2s linear infinite;
+  }
+  .loading-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--ink-dim);
+  }
+
+  /* ERROR */
+  .error-banner {
+    margin: 12px 16px;
+    padding: 14px;
+    background: #fff3f3;
+    border: 1.5px solid var(--red);
+    border-radius: 12px;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  .error-banner h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+  .error-banner code {
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  /* CONFIG MODAL */
+  .config-info {
+    margin: 16px;
+    padding: 16px;
+    background: white;
+    border: 2px dashed var(--yellow);
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .config-info h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+  .config-info code {
+    background: var(--surface-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-ball"></div>
+  <div class="loading-text">CARGANDO ÁLBUM</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="title-wrap">
+      <div class="title-badge">26</div>
+      <div class="title">PANINI <span>2026</span></div>
+    </div>
+    <div class="total">
+      <b id="totalHave">0</b>/<span id="totalAll">0</span><br>
+      <span id="pctText">0%</span>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <span><span class="dot" id="statusDot"></span><span id="statusText">Actualizado</span></span>
+  <button class="refresh-btn" id="refreshBtn">
+    <span class="refresh-icon">↻</span> Refrescar
+  </button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot missing"></span>Falta</div>
+  <div class="legend-item"><span class="legend-dot have"></span>Tengo</div>
+  <div class="legend-item"><span class="legend-dot dup"></span>Repetida</div>
+</div>
+
+<!-- GROUP TABS -->
+<div class="group-tabs" id="groupTabs"></div>
+
+<!-- ERROR PLACEHOLDER -->
+<div id="errorContainer"></div>
+
+<!-- CONTENT -->
+<div class="content" id="content"></div>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// Reemplaza SHEET_CSV_URL con la URL pública de tu Google Sheet
+// (Archivo → Compartir → Publicar en la web → CSV)
+// ============================================================
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSh9hQQGykBZreyGkcr4xIhL8NstB62C-hlNs2JS4R9vjVOUEVoUC-J7qrwf-yYHs0lrlMAOrAFoqVK/pub?gid=0&single=true&output=csv';
+
+// ============================================================
+// PARSEO CSV
+// ============================================================
+function parseCSV(text) {
+  const rows = [];
+  let cur = [], field = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i+1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else field += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { cur.push(field); field = ''; }
+      else if (c === '\n') { cur.push(field); rows.push(cur); cur = []; field = ''; }
+      else if (c === '\r') { /* skip */ }
+      else field += c;
+    }
+  }
+  if (field.length || cur.length) { cur.push(field); rows.push(cur); }
+  return rows;
+}
+
+function parseNumberList(str) {
+  if (!str || !str.trim()) return [];
+  return str.split(/[,;\s]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .map(s => parseInt(s, 10))
+    .filter(n => !isNaN(n));
+}
+
+// ============================================================
+// CARGA DEL SHEET
+// ============================================================
+let TEAMS = []; // se llena desde el sheet
+let activeGroup = 'all';
+let openTeams = new Set();
+let lastUpdate = null;
+
+async function loadSheet() {
+  if (SHEET_CSV_URL === 'PEGA_AQUI_LA_URL_DEL_CSV') {
+    showConfigInfo();
+    document.getElementById('loadingScreen').classList.add('hide');
+    return;
+  }
+
+  setStatus('loading', 'Cargando...');
+  const refreshBtn = document.getElementById('refreshBtn');
+  refreshBtn.classList.add('spinning');
+
+  try {
+    // cache-buster para forzar recarga
+    const url = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    parseSheetData(text);
+    lastUpdate = new Date();
+    setStatus('ok', 'Actualizado ' + formatTime(lastUpdate));
+    renderAll();
+  } catch (e) {
+    console.error(e);
+    setStatus('error', 'Error al cargar');
+    showError('No pudimos cargar el Google Sheet. Verifica que esté publicado en la web como CSV y que la URL en el código sea correcta.', e.message);
+  } finally {
+    refreshBtn.classList.remove('spinning');
+    document.getElementById('loadingScreen').classList.add('hide');
+  }
+}
+
+function parseSheetData(csvText) {
+  const rows = parseCSV(csvText);
+  if (rows.length < 2) {
+    TEAMS = [];
+    return;
+  }
+  // detectar headers (case-insensitive, busca columnas conocidas)
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  const idx = {
+    code: findHeader(headers, ['iniciales', 'code', 'sigla']),
+    group: findHeader(headers, ['grupos', 'grupo', 'group']),
+    name: findHeader(headers, ['pais', 'país', 'name', 'equipo']),
+    missing: findHeader(headers, ['faltantes', 'missing', 'falta']),
+    dups: findHeader(headers, ['repetidas', 'dups', 'repetida'])
+  };
+
+  TEAMS = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || r.length === 0) continue;
+    const code = (r[idx.code] || '').trim();
+    if (!code) continue;
+    const group = (r[idx.group] || '').trim();
+    const name = (r[idx.name] || code).trim();
+    const missing = parseNumberList(r[idx.missing] || '');
+    const dups = parseNumberList(r[idx.dups] || '');
+    // FWC tiene rango 0-19, los demás 1-20 (detectar por código)
+    const range = code.toUpperCase() === 'FWC' ? [0, 19] : [1, 20];
+    TEAMS.push({ code: code.toUpperCase(), group: group.toUpperCase(), name, missing, dups, range });
+  }
+}
+
+function findHeader(headers, possibilities) {
+  for (const p of possibilities) {
+    const i = headers.findIndex(h => h === p || h.startsWith(p));
+    if (i !== -1) return i;
+  }
+  return -1;
+}
+
+// ============================================================
+// COMPUTAR ESTADO
+// ============================================================
+function getTeamComputed(team) {
+  const [a, b] = team.range;
+  const allNums = [];
+  for (let i = a; i <= b; i++) allNums.push(i);
+  const missingSet = new Set(team.missing);
+  // si el equipo no tiene NADA en missing ni dups → asumir TODO falta (equipo aún no llegado)
+  const isEmpty = team.missing.length === 0 && team.dups.length === 0;
+  const haveNums = isEmpty ? [] : allNums.filter(n => !missingSet.has(n));
+  const missingNums = isEmpty ? allNums : allNums.filter(n => missingSet.has(n));
+  const dupCount = team.dups.length;
+  return { allNums, haveNums, missingNums, dupCount, isEmpty };
+}
+
+function getGlobalStats() {
+  let total = 0, have = 0;
+  TEAMS.forEach(t => {
+    const c = getTeamComputed(t);
+    total += c.allNums.length;
+    have += c.haveNums.length;
+  });
+  return { total, have, pct: total ? Math.round(have/total*100) : 0 };
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll() {
+  renderHeader();
+  renderTabs();
+  renderTeams();
+}
+
+function renderHeader() {
+  const s = getGlobalStats();
+  document.getElementById('totalHave').textContent = s.have;
+  document.getElementById('totalAll').textContent = s.total;
+  document.getElementById('pctText').textContent = s.pct + '%';
+  document.getElementById('progressFill').style.width = s.pct + '%';
+}
+
+function renderTabs() {
+  const groups = ['all', ...Array.from(new Set(TEAMS.map(t => t.group)))];
+  const container = document.getElementById('groupTabs');
+  container.innerHTML = '';
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'group-tab' + (g === activeGroup ? ' active' : '');
+    btn.textContent = g === 'all' ? 'TODOS' : (g === 'FWC' ? 'FWC' : 'GRUPO ' + g);
+    btn.onclick = () => {
+      activeGroup = g;
+      renderTabs();
+      renderTeams();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderTeams() {
+  const container = document.getElementById('content');
+  container.innerHTML = '';
+  const teams = activeGroup === 'all'
+    ? TEAMS
+    : TEAMS.filter(t => t.group === activeGroup);
+  if (teams.length === 0) {
+    container.innerHTML = '<div class="empty-msg" style="padding:24px;text-align:center;">No hay equipos en este grupo.</div>';
+    return;
+  }
+  teams.forEach(team => container.appendChild(renderTeam(team)));
+}
+
+function renderTeam(team) {
+  const c = getTeamComputed(team);
+  const isComplete = c.missingNums.length === 0 && !c.isEmpty;
+  const isOpen = openTeams.has(team.code);
+
+  const card = document.createElement('div');
+  card.className = 'team' + (isComplete ? ' complete' : '') + (isOpen ? ' open' : '');
+
+  const header = document.createElement('div');
+  header.className = 'team-header';
+  header.onclick = () => {
+    if (openTeams.has(team.code)) openTeams.delete(team.code);
+    else openTeams.add(team.code);
+    renderTeams();
+  };
+
+  const dupSet = new Set(team.dups);
+  header.innerHTML = `
+    <div class="team-flag">${team.code}</div>
+    <div class="team-info">
+      <div class="team-name">
+        ${team.name}
+        ${isComplete ? '<span class="check-icon">✓</span>' : ''}
+      </div>
+      <div class="team-stats">
+        <span class="stat-have">${c.haveNums.length}/${c.allNums.length}</span>
+        ${c.missingNums.length ? `<span class="stat-missing">${c.missingNums.length} faltan</span>` : ''}
+        ${c.dupCount ? `<span class="stat-dup">${c.dupCount} rep</span>` : ''}
+      </div>
+    </div>
+    <div class="chevron">⌄</div>
+  `;
+  card.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'team-body';
+  const inner = document.createElement('div');
+  inner.className = 'team-body-inner';
+
+  if (c.isEmpty) {
+    const e = document.createElement('div');
+    e.className = 'empty-msg';
+    e.textContent = 'Aún sin datos para este equipo. Faltan todas las 20 estampas.';
+    inner.appendChild(e);
+  } else {
+    // Estampas
+    const section = document.createElement('div');
+    section.className = 'section';
+    section.innerHTML = `<div class="section-label">Estampas</div>`;
+    const chips = document.createElement('div');
+    chips.className = 'chips';
+    c.allNums.forEach(n => {
+      const chip = document.createElement('div');
+      const has = c.haveNums.includes(n);
+      const hasDup = dupSet.has(n);
+      chip.className = 'chip' + (has ? ' have' : '') + (hasDup ? ' has-dup' : '');
+      chip.textContent = n;
+      chips.appendChild(chip);
+    });
+    section.appendChild(chips);
+    inner.appendChild(section);
+
+    // Repetidas
+    if (team.dups.length > 0) {
+      const dupSection = document.createElement('div');
+      dupSection.className = 'section';
+      dupSection.innerHTML = `<div class="section-label">Repetidas</div>`;
+      const dupContainer = document.createElement('div');
+      dupContainer.className = 'chips';
+      // contar repeticiones (si el número aparece varias veces en dups)
+      const dupCounts = {};
+      team.dups.forEach(n => { dupCounts[n] = (dupCounts[n] || 0) + 1; });
+      Object.keys(dupCounts).map(k => parseInt(k)).sort((a,b)=>a-b).forEach(n => {
+        const count = dupCounts[n];
+        const dupChip = document.createElement('div');
+        dupChip.className = 'dup-chip';
+        dupChip.innerHTML = `<span>${n}</span>` + (count > 1 ? `<span class="dup-count">×${count}</span>` : '');
+        dupContainer.appendChild(dupChip);
+      });
+      dupSection.appendChild(dupContainer);
+      inner.appendChild(dupSection);
+    }
+  }
+
+  body.appendChild(inner);
+  card.appendChild(body);
+  return card;
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function setStatus(state, text) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'dot ' + (state === 'loading' ? 'loading' : state === 'error' ? 'error' : '');
+  document.getElementById('statusText').textContent = text;
+}
+
+function formatTime(d) {
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+}
+
+function showError(msg, detail) {
+  const c = document.getElementById('errorContainer');
+  c.innerHTML = `
+    <div class="error-banner">
+      <h4>⚠ Error</h4>
+      <p>${msg}</p>
+      ${detail ? `<p style="margin-top:6px;font-size:11px;color:var(--ink-dim);"><code>${detail}</code></p>` : ''}
+    </div>
+  `;
+}
+
+function showConfigInfo() {
+  const c = document.getElementById('errorContainer');
+  c.innerHTML = `
+    <div class="config-info">
+      <h4>👋 Configura tu Google Sheet</h4>
+      <p>Esta web aún no está conectada. Sigue las instrucciones del README para:</p>
+      <ol style="margin:8px 0 8px 20px;">
+        <li>Crear el Google Sheet con tus datos</li>
+        <li>Publicarlo en la web como CSV</li>
+        <li>Pegar la URL del CSV en la variable <code>SHEET_CSV_URL</code> dentro del archivo <code>index.html</code></li>
+      </ol>
+    </div>
+  `;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('refreshBtn').onclick = loadSheet;
+loadSheet();
+// Auto-refresh cada 5 minutos
+setInterval(loadSheet, 5 * 60 * 1000);
+</script>
+</body>
+</html>
