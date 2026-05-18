@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d1410">
-<title>Álbum Panini · Mundial 2026</title>
+<meta name="theme-color" content="#1f1f23">
+<title>Patty & Jerry · Panini 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Dark mode — paleta inspirada en el álbum Panini 2026 */
-    --bg: #01f1f23;           /* verde oscurísimo casi negro */
-    --bg-2: #131b16;          /* superficie elevada */
-    --surface: #1a2520;       /* tarjetas */
-    --surface-2: #243029;     /* superficie más clara */
-    --border: #2d3b33;        /* borde sutil */
+    --bg: #1f1f23;           /* gris oscuro neutro */
+    --bg-2: #26262b;          /* superficie elevada */
+    --surface: #2c2c32;       /* tarjetas */
+    --surface-2: #36363d;     /* superficie más clara */
+    --border: #3d3d45;        /* borde sutil */
     --ink: #f4ead0;           /* texto principal (crema cálido) */
-    --ink-dim: #a8b8ad;
-    --ink-faint: #6b7a70;
+    --ink-dim: #b0b0b8;
+    --ink-faint: #6e6e78;
     --green: #1fb573;         /* verde fútbol brillante */
     --green-dark: #0f8a55;
     --yellow: #ffd24a;        /* amarillo trofeo */
@@ -36,9 +36,9 @@
     font-family: 'Manrope', sans-serif;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 0% 0%, rgba(31,181,115,0.15) 0px, transparent 45%),
-      radial-gradient(circle at 100% 100%, rgba(255,210,74,0.10) 0px, transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(255,85,102,0.08) 0px, transparent 40%);
+      radial-gradient(circle at 0% 0%, rgba(31,181,115,0.08) 0px, transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(255,210,74,0.05) 0px, transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(255,85,102,0.04) 0px, transparent 40%);
     background-attachment: fixed;
     color: var(--ink);
     min-height: 100vh;
@@ -51,7 +51,7 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(13, 20, 16, 0.92);
+    background: rgba(31, 31, 35, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 2px solid var(--green);
@@ -69,28 +69,21 @@
     align-items: center;
     gap: 10px;
   }
-  .title-badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: var(--green);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-    line-height: 1;
+  .title-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: block;
   }
   .title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 1.5px;
-    line-height: 1;
+    font-size: 18px;
+    letter-spacing: 1.2px;
+    line-height: 1.1;
     color: var(--ink);
   }
-  .title span { color: var(--red); }
+  .title span { color: var(--red); display: block; font-size: 14px; letter-spacing: 1px; margin-top: 1px; }
   .total {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -467,8 +460,8 @@
 <div class="header">
   <div class="header-top">
     <div class="title-wrap">
-      <div class="title-badge">26</div>
-      <div class="title">PATTY & JERRY <span>PANINI 2026</span> </div>
+      <img src="logo.png" alt="FIFA World Cup 2026" class="title-logo">
+      <div class="title">PATTY & JERRY <span>PANINI 2026</span></div>
     </div>
     <div class="total">
       <b id="totalHave">0</b>/<span id="totalAll">0</span><br>
